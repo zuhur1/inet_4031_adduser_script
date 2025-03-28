@@ -40,7 +40,7 @@ def main():
         cmd = "/usr/sbin/adduser --disabled-password --gecos '%s' %s" % (gecos,username)
 
         #if uncommented os.system will communicate the command with the os and create the user
-        print cmd
+        print (cmd) 
         os.system(cmd)
 
         #the print statement displays that a password is being for username, this is a verification step and can be used for debugging purposes
@@ -49,7 +49,8 @@ def main():
         cmd = "/bin/echo -ne '%s\n%s' | /usr/bin/sudo /usr/bin/passwd %s" % (password,password,username)
 
         #The first time I ran this, I DID NOT uncomment os.system(cmd) because I wanted to make sure the code worked. Then i uncommented
-        print cmd
+        #add parantheses to the print ststament
+        print (cmd)
         os.system(cmd)
 
         for group in groups:
@@ -57,7 +58,7 @@ def main():
             if group != '-':
                 print("==> Assigning %s to the %s group..." % (username,group))
                 cmd = "/usr/sbin/adduser %s %s" % (username,group)
-                print cmd
+                print (cmd)
                 os.system(cmd)
 
 if __name__ == '__main__':
