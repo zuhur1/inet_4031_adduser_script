@@ -2,67 +2,63 @@
 
 # INET4031
 # Zuhur Hashi
-# Data Created: 03/25/2025
-# Date Last Modified: 03/25/2025
+# 03/27/2025
+# 03/27/2025
 
-# identify what each of these imports is for: imports modules, os is used to execute system commands, re- used for regular expression matching, sys - provides access to system input and output 
+#os - provides functions to interact with the operating system, re - used for working with regular expression, sys allows input/output
 import os
 import re
 import sys
 
-#YOUR CODE SHOULD HAVE NONE OF THE INSTRUCTORS COMMENTS REMAINING WHEN YOU ARE FINISHED
-#PLEASE REPLACE INSTRUCTOR "PROMPTS" WITH COMMENTS OF YOUR OWN
 
 def main():
     for line in sys.stdin:
-	#checks if the line is a comment or not 
+
+        #Check if the line starts with a '#' character. These lines will be ignored
         match = re.match("^#",line)
 
-        #splits the line by where there is ':'
+        #This strips whitespace and splits line by ':' . This is done to separate the line into fields such as username, password etc
         fields = line.strip().split(':')
 
-        #REPLACE THESE COMMENTS with a single comment describing the logic of the IF 
-        #what would an appropriate comment be for describing what this IF statement is checking for?
-        #what happens if the IF statement evaluates to true?
-        #how does this IF statement rely on wat happened in the prior two lines of code? The match and fields lines.
-        #the code clearly shows that the variables match and the length of fields is being checked for being != 5  so why is it doing that?
-	#the if statement skips procressing if the line is a comment or does not contain exactly 5 fields
+        #This if checks if the line either starts with a '#' or if the fields do not equal 5.
+        # The prior lines is important because ^ the fields variable is declare and the .split determine how fields are determined
 
         if match or len(fields) != 5:
             continue
 
-        # extracts user info from fields, the username is info at the index 0 and the password at index 1,
+        #The next three lines take the split up fields and assign them variables
         username = fields[0]
         password = fields[1]
         gecos = "%s %s,,," % (fields[3],fields[2])
 
-        #it is being split so that it can handle multiple groups per user
+        #The split is happening here because a user can have multiple groups and groups are separated using ',' in the input file
         groups = fields[4].split(',')
 
-        #the purpose of the print statement is to confirm that the account is being created for the 'username'
+        #The point of the next print statement is to display to the user the name of the user being created 
         print("==> Creating account for %s..." % (username))
-        #construct the command to create a user with a disabled password and GECOS information
+        #stores the command that will be used to create the user (this is the format we use in terminal)
         cmd = "/usr/sbin/adduser --disabled-password --gecos '%s' %s" % (gecos,username)
-	#if uncommented, this command will create a new user account
-       	print cmd
+
+        #if uncommented os.system will communicate the command with the os and create the user
+        print cmd
         os.system(cmd)
 
-        #the purpose of this print statement is to indicate the start of password setup
+        #the print statement displays that a password is being for username, this is a verification step and can be used for debugging purposes
         print("==> Setting the password for %s..." % (username))
-        #consreuct system command to set the user's password securely using echo and passwd command
+        #stores the command to set the password for the user
         cmd = "/bin/echo -ne '%s\n%s' | /usr/bin/sudo /usr/bin/passwd %s" % (password,password,username)
 
-	# the first time I run the code I should uncomment the next line. If uncommented, it will execute the command to set the user's password 
-       	print cmd
+        #The first time I ran this, I DID NOT uncomment os.system(cmd) because I wanted to make sure the code worked. Then i uncommented
+        print cmd
         os.system(cmd)
 
         for group in groups:
-            #if the group field is not '-', it assigns the user to the specified group
+            #the if statement check for '-'. this character indicates that the group is not assigned. if there no '-' then the group that is there will be assigned to the user
             if group != '-':
                 print("==> Assigning %s to the %s group..." % (username,group))
-                cmd = "/usr/sbin/adduser %s %s" % (username,group),
-                #print cmd
-                #os.system(cmd)
+                cmd = "/usr/sbin/adduser %s %s" % (username,group)
+                print cmd
+                os.system(cmd)
 
 if __name__ == '__main__':
     main()
